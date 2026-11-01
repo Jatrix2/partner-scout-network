@@ -4,6 +4,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    mode: search.mode === "signup" ? ("signup" as const) : undefined,
+  }),
   head: () => ({
     meta: [
       {
@@ -24,7 +27,8 @@ type Mode = "signin" | "signup" | "set-password";
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>("signin");
+  const initialMode = Route.useSearch().mode;
+  const [mode, setMode] = useState<Mode>(initialMode ?? "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -120,12 +124,11 @@ function AuthPage() {
               />
             </label>
           )}
-          {mode !== "signup" && (
-            <label className="block">
-              <span className="text-sm font-medium text-foreground">
-                {mode === "set-password" ? "New password" : "Password"}
-              </span>
-              <input
+          <label className="block">
+            <span className="text-sm font-medium text-foreground">
+              {mode === "set-password" ? "New password" : mode === "signup" ? "Choose a password" : "Password"}
+            </span>
+            <input
                 type="password"
                 required
                 minLength={8}
