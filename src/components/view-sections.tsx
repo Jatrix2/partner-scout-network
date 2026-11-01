@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight, Star, type LucideIcon } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Star, UserPlus, type LucideIcon } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -189,6 +189,31 @@ export function BlogSection({ posts }: { posts: ViewHighlights["posts"] }) {
         ))}
       </div>
     </Section>
+  );
+}
+
+export function EmptyPartners() {
+  return (
+    <div className="mx-auto max-w-2xl rounded-3xl border border-border bg-card p-10 text-center shadow-sm">
+      <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <UserPlus className="h-6 w-6" />
+      </span>
+      <h2 className="mt-6 font-view-display text-2xl font-bold text-foreground">
+        Partners are currently being onboarded.
+      </h2>
+      <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+        The network is warming up. If you are an agent or specialist, you can
+        apply to join now — the first account to sign up becomes the network
+        admin.
+      </p>
+      <Link
+        to="/auth"
+        search={{ mode: "signup" }}
+        className="mt-8 inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+      >
+        Apply to join <ArrowRight className="h-4 w-4" />
+      </Link>
+    </div>
   );
 }
 
