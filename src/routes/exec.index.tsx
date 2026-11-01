@@ -1,11 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search, Lock, Award, Handshake, ShieldCheck } from "lucide-react";
-import { WhySection, BrowseSection, HowSection, MetricsSection, CaseStudiesSection, ReviewsSection, BlogSection, FaqSection, CtaSection, topSkills } from "@/components/view-sections";
+import { WhySection, BrowseSection, HowSection, CaseStudiesSection, ReviewsSection, BlogSection, FaqSection, CtaSection, EmptyPartners, topSkills } from "@/components/view-sections";
 import { AgentCard } from "@/components/agent-card";
 import { agentListQuery, viewHighlightsQuery } from "@/lib/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import execHero from "@/assets/exec-hero.jpg.asset.json";
 
 export const Route = createFileRoute("/exec/")({
   head: () => ({
@@ -86,7 +85,7 @@ function ExecHome() {
     <>
       <section className="relative flex min-h-screen flex-col justify-center overflow-hidden border-b border-border px-6 py-24">
         <img
-          src={execHero.url}
+          src="/hero/exec-hero.jpg"
           alt=""
           aria-hidden
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
@@ -133,7 +132,9 @@ function ExecHome() {
       <BrowseSection skills={skills} onPick={pick} intro={"Select a discipline to see partners who practise it."} />
       <HowSection steps={STEPS} />
       <section id="partners" className="mx-auto w-full max-w-6xl scroll-mt-20 px-6 py-24">
-        {filtered.length === 0 ? (
+        {agents.length === 0 ? (
+          <EmptyPartners />
+        ) : filtered.length === 0 ? (
           <p className="py-16 text-center text-muted-foreground">
             No partners match “{query}”. Try a skill, a service, a name or a partner ID.
           </p>

@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import agentHero from "@/assets/agent-hero.jpg.asset.json";
 import { ArrowRight, Globe, IdCard, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/agent/")({
