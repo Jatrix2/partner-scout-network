@@ -55,8 +55,16 @@ export type BlogPostListItem = {
 };
 
 function createPublicClient() {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
+  // On external hosts (e.g. Vercel) the non-prefixed server vars may be absent;
+  // fall back to the build-time VITE_ vars so one config works for both sides.
+  const url = process.env["SUPABASE_URL"] || import.meta.env["VITE_SUPABASE_URL"];
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+  if (!url || !key) {
+    const message = "Missing SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY environment variable(s).";
+    console.error(`[Supabase] ${message}`);
+    throw new Error(message);
+  }
+  return createClient<Database>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
     // Opaque sb_ keys aren't JWTs; send only apikey, not the default Authorization bearer.
     global: {
