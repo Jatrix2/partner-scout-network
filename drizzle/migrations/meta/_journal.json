@@ -15,6 +15,13 @@
       "when": 1793515221241,
       "tag": "0001_first_signup_becomes_admin_bootstrap",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793583758819,
+      "tag": "0002_signup_profile_for_every_user",
+      "breakpoints": true
     }
   ]
 }
