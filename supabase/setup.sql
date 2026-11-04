@@ -412,3 +412,20 @@ after insert on auth.users
 for each row execute function public.bootstrap_first_admin();
 
 COMMENT ON FUNCTION public.bootstrap_first_admin() IS 'Fresh-database bootstrap: the first signup gets an approved profile and the admin role. Every later signup gets a hidden profile row (approved = false) that waits in the admin approval queue; invited agents keep the profile row created for them.';
+-- Auto-confirm every new account so signup signs users straight in,
+-- regardless of the project's "Confirm email" dashboard setting.
+create or replace function public.auto_confirm_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  new.email_confirmed_at := coalesce(new.email_confirmed_at, now());
+  return new;
+end
+$$;
+
+create trigger on_auth_user_before_insert_confirm
+before insert on auth.users
+for each row execute function public.auto_confirm_user();
