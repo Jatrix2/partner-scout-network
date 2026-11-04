@@ -68,18 +68,22 @@ function AuthPage() {
           navigate({ to: "/dashboard", replace: true });
           return;
         }
+        // Supabase hides duplicate signups: no error, but an empty identities list.
+        if (data.user && (data.user.identities?.length ?? 0) === 0) {
+          toast.error("This email is already registered. Please sign in or reset your password.");
+          setMode("signin");
+          return;
+        }
         // Fallback: when email confirmation is off but no session came back, sign in directly.
-        const { data: login, error: loginError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { data: login } = await supabase.auth.signInWithPassword({ email, password });
         if (login?.session) {
           toast.success("Account created.");
           navigate({ to: "/dashboard", replace: true });
-        } else if (loginError && /confirm/i.test(loginError.message)) {
-          setNotice("Check your inbox — we sent you a confirmation link to activate your account.");
         } else {
-          toast.error(loginError?.message ?? "Could not sign you in. Please try signing in.");
+          // Unconfirmed accounts are reported as "Invalid login credentials" by Supabase.
+          setNotice(
+            "Your account was created but needs email confirmation before you can sign in. Check your inbox, or ask the site owner to turn off email confirmation.",
+          );
         }
       } else {
         const { error } = await supabase.auth.updateUser({ password });
