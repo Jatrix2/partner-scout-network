@@ -66,8 +66,20 @@ function AuthPage() {
         if (data.session) {
           toast.success("Account created.");
           navigate({ to: "/dashboard", replace: true });
-        } else {
+          return;
+        }
+        // Fallback: when email confirmation is off but no session came back, sign in directly.
+        const { data: login, error: loginError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (login?.session) {
+          toast.success("Account created.");
+          navigate({ to: "/dashboard", replace: true });
+        } else if (loginError && /confirm/i.test(loginError.message)) {
           setNotice("Check your inbox — we sent you a confirmation link to activate your account.");
+        } else {
+          toast.error(loginError?.message ?? "Could not sign you in. Please try signing in.");
         }
       } else {
         const { error } = await supabase.auth.updateUser({ password });
